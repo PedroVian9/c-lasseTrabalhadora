@@ -1,7 +1,3 @@
-Claro\! Aqui está uma proposta de documentação para o `README.md` do seu projeto, explicando a linguagem "C-lasse Trabalhadora".
-
------
-
 # Compilador C-lasse Trabalhadora 🐜
 
 Este projeto é um compilador que traduz uma linguagem de programação temática, a **C-lasse Trabalhadora**, para a linguagem C padrão. A C-lasse Trabalhadora foi criada com o objetivo de ser didática e divertida, utilizando uma analogia com o universo das formigas para representar conceitos de programação.
