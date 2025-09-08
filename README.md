@@ -4,7 +4,7 @@ Bem-vindo ao repositório da **C-lasse Trabalhadora**, uma linguagem de programa
 
 ## 🐜 Sobre o Conceito
 
-A C-lasse Trabalhadora reimagina a sintaxe da programação procedural com um vocabulário que remete ao trabalho árduo e coordenado de uma colônia de formigas. Conceitos como tipos de dados, estruturas de controle e funções são representados por termos como `formigaInteira`, `seObstaculo`, e `natureza`.
+A C-lasse Trabalhadora reimagina a sintaxe da programação em linguagem C com um vocabulário que remete ao trabalho árduo e coordenado de uma colônia de formigas. Conceitos como tipos de dados, estruturas de controle e funções são representados por termos como `formigaInteira`, `seObstaculo`, e `natureza`.
 
 O objetivo é criar uma experiência de programação divertida e didática, onde cada linha de código contribui para a construção de um "formigueiro" lógico.
 
