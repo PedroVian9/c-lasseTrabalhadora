@@ -86,13 +86,26 @@ class GeradorCodigo(Parser):
     def __init__(self):
         self.funcao_natureza_encontrada = False
         self.mapeamento = {
-            'formigaInteira': 'int', 'formigaFlutuante': 'float', 'formigaFlutuante^2': 'double',
-            'formigaLetra': 'char', 'formigaSentinela': 'bool', 'formigaAncia': 'long',
-            'formigaLarva': 'short', 'operario': 'unsigned', 'tunelVazio': 'void',
-            'vigia': 'true', 'descansa': 'false', 'seObstaculo': 'if',
-            'senaoCavar': 'else', 'senaoSeOutroObstaculo': 'else if',
-            'enquantoHouverComida': 'while', 'marchar': 'for', 'cavarAteEnquanto': 'do',
-            'inspecionarTunel': 'switch', 'caminho': 'case', 'retornarAoNinho': 'break',
+            'formigaInteira': 'int',
+            'formigaFlutuante': 'float', 
+            'formigaFlutuante^2': 'double',
+            'formigaLetra': 'char', 
+            'formigaSentinela': 'bool', 
+            'formigaAncia': 'long',
+            'formigaLarva': 'short', 
+            'operario': 'unsigned', 
+            'tunelVazio': 'void',
+            'vigia': 'true', 
+            'descansa': 'false', 
+            'seObstaculo': 'if',
+            'senaoCavar': 'else', 
+            'senaoSeOutroObstaculo': 'else if',
+            'enquantoHouverComida': 'while', 
+            'marchar': 'for', 
+            'cavarAteEnquanto': 'do',
+            'inspecionarTunel': 'switch', 
+            'caminho': 'case', 
+            'retornarAoNinho': 'break',
             'ignorarFolha': 'continue',
         }
 
