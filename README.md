@@ -1,234 +1,108 @@
-# Compilador C-lasse Trabalhadora 🐜
+# Linguagem C-lasse Trabalhadora
 
-Este projeto é um compilador que traduz uma linguagem de programação temática, a **C-lasse Trabalhadora**, para a linguagem C padrão. A C-lasse Trabalhadora foi criada com o objetivo de ser didática e divertida, utilizando uma analogia com o universo das formigas para representar conceitos de programação.
+Bem-vindo ao repositório da **C-lasse Trabalhadora**, uma linguagem de programação experimental e temática, inspirada no universo das formigas e sua sociedade organizada. Esta linguagem foi criada como um projeto educacional para demonstrar os conceitos de análise léxica e sintática, culminando em um compilador que traduz o código-fonte para a linguagem C.
 
-Todas as palavras-chave, tipos de dados e estruturas de controle são em português e seguem a temática, facilitando a compreensão para programadores iniciantes.
+## 🐜 Sobre o Conceito
 
-## A Filosofia da Linguagem
+A C-lasse Trabalhadora reimagina a sintaxe da programação procedural com um vocabulário que remete ao trabalho árduo e coordenado de uma colônia de formigas. Conceitos como tipos de dados, estruturas de controle e funções são representados por termos como `formigaInteira`, `seObstaculo`, e `natureza`.
 
-A C-lasse Trabalhadora enxerga o código como uma colônia de formigas. Cada variável é uma formiga com uma função específica, as funções são túneis que levam a outras partes do formigueiro, e as estruturas de controle são as ordens e decisões tomadas durante a marcha diária em busca de comida (dados).
+O objetivo é criar uma experiência de programação divertida e didática, onde cada linha de código contribui para a construção de um "formigueiro" lógico.
 
-O objetivo é organizar o "formigueiro" (o código) de maneira clara e eficiente, onde cada "formiga" (variável) executa sua tarefa de forma disciplinada.
+## ⚙️ Como Funciona
 
-## Como Usar o Compilador
+O compilador foi desenvolvido em Python utilizando a biblioteca `sly` para a criação do analisador léxico (lexer) e do analisador sintático (parser). O processo ocorre em duas etapas principais:
 
-### Instalação e Execução
+1.  **Análise Léxica**: O código-fonte em um arquivo `.formiga` é lido e dividido em "tokens" (as menores unidades lógicas da linguagem, como palavras-chave, identificadores e operadores).
+2.  **Análise Sintática e Tradução**: Os tokens são analisados para verificar se a estrutura do código segue as regras gramaticais da linguagem. Se a sintaxe estiver correta, o parser constrói o código equivalente em linguagem C.
 
-1. Certifique-se de ter Python 3 instalado em seu sistema
-2. Faça o download do script `c-lasseT.py`
-3. Torne o script executável (no Linux/Mac):
-   ```bash
-   chmod +x c-lasseT.py
-   ```
+O resultado final é um arquivo `.c` que pode ser compilado por qualquer compilador C padrão (como o GCC). O compilador automaticamente inclui os cabeçalhos `<stdio.h>` e `<stdbool.h>` no arquivo de saída.
 
-### Estrutura de Arquivos
+## 📋 Tabela de Palavras-Chave
 
-O compilador trabalha com arquivos que tenham a extensão `.formiga`. Por exemplo:
-- `exemplo.formiga` (seu código em C-lasse Trabalhadora)
-- `exemplo.c` (arquivo C gerado automaticamente)
+A tabela abaixo mostra a correspondência entre as palavras-chave da C-lasse Trabalhadora e seus equivalentes em C.
 
-### Executando o Compilador
+| **C-lasse Trabalhadora** | **Equivalente em C** | **Descrição** |
+| ------------------------- | -------------------- | ------------------------------------------ |
+| `natureza`                | `main`               | Função principal do programa               |
+| `sinalizar`               | `printf`             | Função para imprimir texto ou variáveis    |
+| `formigaInteira`          | `int`                | Tipo de dado para números inteiros         |
+| `formigaFlutuante`        | `float`              | Tipo para números de ponto flutuante       |
+| `formigaFlutuante^2`      | `double`             | Tipo para ponto flutuante de precisão dupla |
+| `formigaLetra`            | `char`               | Tipo para um único caractere               |
+| `formigaSentinela`        | `bool`               | Tipo booleano (verdadeiro/falso)           |
+| `formigaAncia`            | `long`               | Modificador de tipo `long`                 |
+| `formigaLarva`            | `short`              | Modificador de tipo `short`                |
+| `operario`                | `unsigned`           | Modificador de tipo `unsigned`             |
+| `tunelVazio`              | `void`               | Tipo para funções sem retorno              |
+| `vigia`                   | `true`               | Valor booleano verdadeiro                  |
+| `descansa`                | `false`              | Valor booleano falso                       |
+| `seObstaculo`             | `if`                 | Estrutura de decisão condicional           |
+| `senaoCavar`              | `else`               | Bloco alternativo para o `if`              |
+| `senaoSeOutroObstaculo`   | `else if`            | Condicional alternativa                    |
+| `enquantoHouverComida`    | `while`              | Laço de repetição `while`                  |
+| `marchar`                 | `for`                | Laço de repetição `for`                    |
+| `cavarAteEnquanto`        | `do`                 | Estrutura de laço `do-while`               |
+| `inspecionarTunel`        | `switch`             | Estrutura de seleção `switch`              |
+| `caminho`                 | `case`               | Rótulo de caso dentro de um `switch`       |
+| `retornarAoNinho`         | `break`              | Sai de um laço ou `switch`                 |
+| `ignorarFolha`            | `continue`           | Pula para a próxima iteração do laço       |
+
+## 🚀 Como Usar
+
+### Pré-requisitos
+
+-   Python 3
+-   Biblioteca SLY. Para instalá-la, execute:
+    ```bash
+    pip install sly
+    ```
+
+### Execução
+
+Para compilar um arquivo escrito em C-lasse Trabalhadora, utilize o seguinte comando no seu terminal:
 
 ```bash
-python c-lasseT.py arquivo.formiga
+python c_lasse_trabalhadora.py seu_arquivo.formiga
+````
+
+Isso irá gerar um arquivo C chamado `seu_arquivo.c` no mesmo diretório.
+
+### Exemplo de Código
+
+Crie um arquivo chamado `exemplo.formiga` com o seguinte conteúdo:
+
 ```
+// exemplo.formiga
+// Este programa imprime números de 0 a 4, marchando como formigas.
 
-ou, se o script estiver marcado como executável:
+tunelVazio natureza() {
+    formigaInteira contador;
 
-```bash
-./c-lasseT.py arquivo.formiga
-```
-
-### Comportamento do Compilador
-
-O compilador realiza as seguintes operações automaticamente:
-
-1. **Leitura**: Lê o arquivo `.formiga` especificado
-2. **Tradução**: Converte todas as palavras-chave da C-lasse Trabalhadora para C padrão
-3. **Geração**: Cria um arquivo `.c` com o mesmo nome do arquivo original
-4. **Headers**: Adiciona automaticamente os includes necessários (`#include <stdio.h>` e `#include <stdbool.h>`)
-5. **Estrutura**: Envolve todo o código em uma função `main()` padrão de C
-6. **Indentação**: Aplica indentação automática de 4 espaços para todo o código
-
-### Exemplo Prático
-
-**1. Crie um arquivo `colonia.formiga`:**
-```formiga
-formigaInteira natureza(){
-    // Declaração de variáveis das formigas
-    formigaInteira numero_formigas = 42;
-    formigaFlutuante peso_carga = 3.14;
-    formigaSentinela tem_comida = vigia;
-
-    // Estrutura condicional - se encontrar obstáculo
-    seObstaculo (numero_formigas > 0) {
-        numero_formigas = numero_formigas + 1;
-    } senaoCavar {
-        tem_comida = descansa;
-    }
-
-    // Loop enquanto houver comida
-    enquantoHouverComida (numero_formigas < 100) {
-        numero_formigas = numero_formigas * 2;
-    }
-
-    // Loop organizado (for)
-    marchar (formigaInteira i = 0; i < numero_formigas; i = i + 1) {
-        peso_carga = peso_carga - 0.1;
+    marchar(contador = 0; contador < 5; contador = contador + 1) {
+        sinalizar("Formiga marchando, passo:");
+        sinalizar(contador);
     }
 }
 ```
 
-**2. Execute o compilador:**
+Execute o compilador:
+
 ```bash
-python c-lasseT.py colonia.formiga
+python c_lasse_trabalhadora.py exemplo.formiga
 ```
 
-**3. O compilador gerará automaticamente `colonia.c`:**
+O arquivo `exemplo.c` será gerado com o seguinte código:
+
 ```c
+// exemplo.c
 #include <stdio.h>
 #include <stdbool.h>
 
-int main() {
-    // Declaração de variáveis das formigas
-    int numero_formigas = 42;
-    float peso_carga = 3.14;
-    bool tem_comida = true;
-    
-    // Estrutura condicional - se encontrar obstáculo
-    if (numero_formigas > 0) {
-        numero_formigas = numero_formigas + 1;
-    } else {
-        tem_comida = false;
-    }
-    
-    // Loop enquanto houver comida
-    while (numero_formigas < 100) {
-        numero_formigas = numero_formigas * 2;
-    }
-    
-    // Loop organizado (for)
-    for (int i = 0; i < numero_formigas; i = i + 1) {
-        peso_carga = peso_carga - 0.1;
-    }
-    return 0;
+void main() {
+	int contador;
+	for (contador = 0; contador < 5; contador = contador + 1) {
+		printf("Formiga marchando, passo:\n");
+		printf("%d\n", contador);
+	}
 }
 ```
-
-**4. Compile e execute o código C gerado:**
-```bash
-gcc colonia.c -o colonia
-./colonia
-```
-
-## Mensagens do Compilador
-
-- **Sucesso**: `Compilação concluída! Arquivo gerado: <nome>.c`
-- **Erro de arquivo não encontrado**: `Arquivo não encontrado: <nome>`
-- **Uso incorreto**: `Uso: python c-lasseT <arquivo.formiga>`
-
-## Sintaxe e Palavras-Chave
-
-### 1. Tipos de Dados (Tipos de Formigas)
-
-Cada variável precisa ser declarada com um tipo, que define o tipo de "carga" que ela pode carregar.
-
-| C-lasse Trabalhadora | Equivalente em C | Descrição |
-|:---------------------|:-----------------|:----------|
-| `formigaInteira` | `int` | Para armazenar números inteiros. |
-| `formigaFlutuante` | `float` | Para números de ponto flutuante de precisão simples. |
-| `formigaFlutuante^2` | `double` | Para números de ponto flutuante de precisão dupla. |
-| `formigaLetra` | `char` | Para armazenar um único caractere. |
-| `formigaSentinela` | `bool` | Para valores lógicos (verdadeiro ou falso). |
-| `formigaAncia` | `long` | Para números inteiros longos. |
-| `formigaLarva` | `short` | Para números inteiros curtos. |
-| `operario` | `unsigned` | Modificador para tipos inteiros, indicando ausência de sinal. |
-| `tunelVazio` | `void` | Usado para indicar que uma função não retorna valor. |
-
-**Exemplo de Declaração de Variáveis:**
-```formiga
-formigaInteira natureza() {
-    // Declaração de formigas trabalhadoras (variáveis)
-    formigaInteira numero_de_operarias = 150;
-    formigaFlutuante tamanho_da_folha = 5.7;
-    formigaSentinela rainha_presente = vigia;
-}
-```
-
-### 2. Valores Booleanos (Estado da Sentinela)
-
-A formiga `formigaSentinela` utiliza valores especiais para representar seus estados de vigília.
-
-| C-lasse Trabalhadora | Equivalente em C |
-|:---------------------|:-----------------|
-| `vigia` | `true` |
-| `descansa` | `false` |
-
-**Exemplo:**
-```formiga
-formigaSentinela inimigo_a_vista = descansa;
-```
-
-### 3. Estruturas de Controle (Ordens da Colônia)
-
-As estruturas de controle guiam o fluxo de execução do programa, como se fossem ordens para a colônia.
-
-| C-lasse Trabalhadora | Equivalente em C | Descrição |
-|:---------------------|:-----------------|:----------|
-| `natureza` | `main` | Função principal do programa - onde toda a colônia opera. |
-| `seObstaculo` | `if` | Executa um bloco de código se uma condição for verdadeira. |
-| `senaoCavar` | `else` | Executa um bloco alternativo se a condição do `if` for falsa. |
-| `senaoSeOutroObstaculo` | `else if` | Testa uma nova condição se a anterior for falsa. |
-| `enquantoHouverComida` | `while` | Repete um bloco de código enquanto uma condição for verdadeira. |
-| `marchar` | `for` | Repete um bloco de código um número definido de vezes. |
-| `cavarAteEnquanto` | `do` | Executa um bloco de código uma vez e o repete enquanto a condição for verdadeira. |
-| `inspecionarTunel` | `switch` | Seleciona um de vários blocos de código para ser executado. |
-| `caminho` | `case` | Define um dos blocos de código para a estrutura `switch`. |
-| `retornarAoNinho` | `break` | Interrompe a execução de um loop ou `switch`. |
-| `ignorarFolha` | `continue` | Pula a iteração atual de um loop e vai para a próxima. |
-
-## Limitações Atuais
-
-- O compilador não realiza análise sintática avançada
-- Não há verificação de tipos
-- Não suporta funções customizadas (apenas tradução simples de palavras-chave)
-- Não detecta erros de sintaxe no código original
-
-## Estrutura do Projeto
-
-```
-projeto/
-├── c-lasseT.py          # Compilador principal
-├── exemplo.formiga      # Arquivo de exemplo
-├── exemplo.c           # Arquivo C gerado (após compilação)
-└── README.md           # Este arquivo
-```
-
-## Requisitos
-
-- **Python 3.x** - Para executar o compilador
-- **GCC** - Para compilar o código C gerado
-  - Windows: MinGW-w64, MSYS2, ou Visual Studio Build Tools
-  - Linux: Geralmente já instalado ou via package manager
-  - Mac: Xcode Command Line Tools
-
-## Compatibilidade
-
-- ✅ Windows (com MinGW/MSYS2)
-- ✅ Linux 
-- ✅ macOS
-- ✅ Qualquer sistema com Python 3 e GCC
-
-## Contribuindo
-
-Este projeto é educacional e está aberto a contribuições! Algumas ideias para melhorias:
-
-- Implementar análise sintática completa
-- Adicionar verificação de tipos
-- Suporte a funções customizadas
-- Melhor tratamento de erros
-- Otimizações no código gerado
-
----
-
-Feito com 🐜 para tornar a programação mais divertida e acessível!
