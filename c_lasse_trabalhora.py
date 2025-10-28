@@ -3,23 +3,34 @@ import sys
 import os
 from sly import Lexer, Parser
 
-# =====================================================================
-#  ANALISADOR LÉXICO (LEXER)
-# =====================================================================
 class AnalisadorLexico(Lexer):
     tokens = {
         TIPO_INT, TIPO_FLOAT, TIPO_DOUBLE, TIPO_CHAR, TIPO_BOOL, TIPO_LONG,
         TIPO_SHORT, TIPO_UNSIGNED, TIPO_VOID, BOOL_TRUE, BOOL_FALSE,
         IF, ELSE, ELSEIF, WHILE, FOR, DO, SWITCH, CASE, BREAK, CONTINUE,
         PRINT,
+
+        PROGRAMA, INICIO, FIM,
+        
         ID, NUMERO, STRING,
-        IGUAL, MAIS, MENOS, VEZES, DIVIDE,
+        
+        IGUAL, MAIS, MENOS, VEZES, DIVIDE, MODULO,
         IGUAL_COMP, DIFERENTE, MENOR_Q, MAIOR_Q, MENOR_IGUAL, MAIOR_IGUAL,
+        E_LOGICO, OU_LOGICO, NAO_LOGICO,
     }
 
     ignore = ' \t'
-    ignore_comment = r'//.*'
+    
+    ignore_comment_line = r'//.*'
+    
+    @_(r'/\*(.|\n)*?\*/')
+    def ignore_comment_block(self, t):
+        self.lineno += t.value.count('\n')
 
+    E_LOGICO = r'&&'
+    OU_LOGICO = r'\|\|'
+    NAO_LOGICO = r'!'
+    
     IGUAL_COMP = r'=='
     DIFERENTE = r'!='
     MENOR_IGUAL = r'<='
@@ -32,12 +43,14 @@ class AnalisadorLexico(Lexer):
     MENOS = r'-'
     VEZES = r'\*'
     DIVIDE = r'/'
+    MODULO = r'%'
     
-    literals = { '(', ')', '{', '}', ';', ':', ',' }
+    literals = { '(', ')', '{', '}', ';', ':', ',', '.' }
 
     STRING = r'\"[^"]*\"'
 
     ID = r'[a-zA-Z_][a-zA-Z0-9_^]*'
+    
     ID['formigaInteira'] = TIPO_INT
     ID['formigaFlutuante'] = TIPO_FLOAT
     ID['formigaFlutuante^2'] = TIPO_DOUBLE
@@ -60,13 +73,14 @@ class AnalisadorLexico(Lexer):
     ID['retornarAoNinho'] = BREAK
     ID['ignorarFolha'] = CONTINUE
     ID['sinalizar'] = PRINT
+    ID['colonia'] = PROGRAMA
+    ID['construir'] = INICIO
+    ID['descansar'] = FIM
 
-    @_(r'\d+(\.\d+)?')
+    @_(r'\d+[,\.]\d+|\d+')
     def NUMERO(self, t):
-        if '.' in t.value:
-            t.value = float(t.value)
-        else:
-            t.value = int(t.value)
+        t.value = t.value.replace(',', '.')
+        t.value = float(t.value) if '.' in t.value else int(t.value)
         return t
 
     @_(r'\n+')
@@ -77,14 +91,12 @@ class AnalisadorLexico(Lexer):
         print(f"Erro Léxico: Caractere ilegal '{t.value[0]}' na linha {self.lineno}")
         self.index += 1
 
-# =====================================================================
-#  ANALISADOR SINTÁTICO (PARSER)
-# =====================================================================
 class GeradorCodigo(Parser):
     tokens = AnalisadorLexico.tokens
 
     def __init__(self):
         self.funcao_natureza_encontrada = False
+        self.nome_programa = 'main'
         self.mapeamento = {
             'formigaInteira': 'int', 'formigaFlutuante': 'float', 'formigaFlutuante^2': 'double',
             'formigaLetra': 'char', 'formigaSentinela': 'bool', 'formigaAncia': 'long',
@@ -96,11 +108,33 @@ class GeradorCodigo(Parser):
             'ignorarFolha': 'continue',
         }
 
+    @_('cabecalho_programa declaracoes')
+    def programa(self, p):
+        if not self.funcao_natureza_encontrada:
+            raise ValueError("ERRO: Função 'natureza()' não encontrada!")
+        return p.declaracoes
+
+    @_('PROGRAMA ID ";" declaracoes')
+    def programa(self, p):
+        self.nome_programa = p.ID
+        if not self.funcao_natureza_encontrada:
+            raise ValueError("ERRO: Função 'natureza()' não encontrada!")
+        return p.declaracoes
+
     @_('declaracoes')
     def programa(self, p):
         if not self.funcao_natureza_encontrada:
-            raise ValueError("ERRO: Função 'natureza()' não encontrada! Todo programa C-lasse Trabalhadora deve ter uma função 'natureza()'.")
+            raise ValueError("ERRO: Função 'natureza()' não encontrada!")
         return p.declaracoes
+
+    @_('PROGRAMA ID ";"')
+    def cabecalho_programa(self, p):
+        self.nome_programa = p.ID
+        return ''
+
+    @_('')
+    def cabecalho_programa(self, p):
+        return ''
 
     @_('declaracao declaracoes')
     def declaracoes(self, p):
@@ -114,16 +148,20 @@ class GeradorCodigo(Parser):
     def declaracao(self, p):
         return p.declaracao_funcao
 
+    # Declaração de função: tipo nome() { corpo }
     @_('tipo ID "(" ")" "{" corpo "}"')
     def declaracao_funcao(self, p):
         nome_funcao = p.ID
         nome_traduzido = nome_funcao
-        
+        # Função natureza → main()
         if nome_funcao == 'natureza':
             self.funcao_natureza_encontrada = True
             nome_traduzido = 'main'
-            
         return f'{p.tipo} {nome_traduzido}() {{\n{p.corpo}}}\n'
+
+    @_('INICIO instrucoes FIM')
+    def corpo(self, p):
+        return p.instrucoes
 
     @_('instrucoes')
     def corpo(self, p):
@@ -137,12 +175,17 @@ class GeradorCodigo(Parser):
     def instrucoes(self, p):
         return ''
 
-    @_('declaracao_variavel', 'atribuicao', 'estrutura_controle', 'break_stmt', 'continue_stmt', 'print_stmt')
+    # Cada instrução pode ser uma variável, controle, print etc.
+    @_('declaracao_variavel', 'atribuicao', 'estrutura_controle', 'break_stmt', 
+       'continue_stmt', 'print_stmt', 'bloco_aninhado')
     def instrucao(self, p):
         return p[0]
 
-    @_('tipo ID IGUAL expressao ";"',
-       'tipo ID ";"')
+    @_('INICIO instrucoes FIM')
+    def bloco_aninhado(self, p):
+        return f'\t{{\n{p.instrucoes}\t}}\n'
+
+    @_('tipo ID IGUAL expressao ";"', 'tipo ID ";"')
     def declaracao_variavel(self, p):
         if len(p) == 5:
             return f'\t{p.tipo} {p.ID} = {p.expressao};\n'
@@ -162,7 +205,7 @@ class GeradorCodigo(Parser):
         else:
             return f'\tprintf("%d\\n", {argumento});\n'
 
-    @_('STRING', 'ID')
+    @_('STRING', 'ID', 'expressao')
     def print_arg(self, p):
         return p[0]
 
@@ -202,13 +245,14 @@ class GeradorCodigo(Parser):
     def for_stmt(self, p):
         return f'\tfor ({p.for_inicializacao}; {p.expressao}; {p.atribuicao_sem_ponto_virgula}) {{\n{p.corpo}\t}}\n'
 
-    @_('declaracao_variavel_for', 'atribuicao_sem_ponto_virgula')
+    @_('tipo ID IGUAL expressao', 'atribuicao_sem_ponto_virgula', '";"')
     def for_inicializacao(self, p):
-        return p[0]
-
-    @_('tipo ID IGUAL expressao')
-    def declaracao_variavel_for(self, p):
-        return f'{p.tipo} {p.ID} = {p.expressao}'
+        if len(p) == 4:
+            return f'{p.tipo} {p.ID} = {p.expressao}'
+        elif len(p) == 1 and p[0] == ';':
+            return ''
+        else:
+            return p[0]
 
     @_('DO "{" corpo "}" WHILE "(" expressao ")" ";"')
     def do_while_stmt(self, p):
@@ -242,14 +286,21 @@ class GeradorCodigo(Parser):
        'expressao MENOS expressao',
        'expressao VEZES expressao',
        'expressao DIVIDE expressao',
+       'expressao MODULO expressao',
        'expressao IGUAL_COMP expressao',
        'expressao DIFERENTE expressao',
        'expressao MENOR_Q expressao',
        'expressao MAIOR_Q expressao',
        'expressao MENOR_IGUAL expressao',
-       'expressao MAIOR_IGUAL expressao')
+       'expressao MAIOR_IGUAL expressao',
+       'expressao E_LOGICO expressao',
+       'expressao OU_LOGICO expressao')
     def expressao(self, p):
         return f'{p.expressao0} {p[1]} {p.expressao1}'
+
+    @_('NAO_LOGICO expressao', 'MENOS expressao')
+    def expressao(self, p):
+        return f'{p[0]}{p.expressao}'
 
     @_('"(" expressao ")"')
     def expressao(self, p):
@@ -259,19 +310,16 @@ class GeradorCodigo(Parser):
        'TIPO_LONG', 'TIPO_SHORT', 'TIPO_UNSIGNED', 'TIPO_VOID')
     def tipo(self, p):
         return self.mapeamento[p[0]]
-        
+
     def error(self, p):
         if p:
             print(f"Erro de Sintaxe: Token inesperado '{p.value}' na linha {p.lineno}")
         else:
             print("Erro de Sintaxe: Fim inesperado do arquivo.")
 
-# =====================================================
-#  FUNÇÃO PRINCIPAL
-# =====================================================
 def main():
     if len(sys.argv) < 2:
-        print("Uso: python c_lasse_trabalhadora.py <arquivo.formiga>")
+        print("Uso: python c_lasse_trabalhadora_v2.py <arquivo.formiga>")
         sys.exit(1)
 
     arquivo_entrada = sys.argv[1]
@@ -291,6 +339,7 @@ def main():
 
         arquivo_saida = arquivo_entrada.replace(".formiga", ".c")
         with open(arquivo_saida, "w", encoding="utf-8") as f:
+            f.write(f"// Programa: {gerador_codigo.nome_programa}\n")
             f.write("#include <stdio.h>\n")
             f.write("#include <stdbool.h>\n\n")
             f.write(codigo_c)
